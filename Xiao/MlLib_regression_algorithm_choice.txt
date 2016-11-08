@@ -1,0 +1,23 @@
+MlLib Regression Algorithm Choice
+
+MLlib is Spark’s machine learning (ML) library. Its goal is to make practical machine learning scalable and easy. At a high level, it provides tools such as:
+
+- ML Algorithms: common learning algorithms such as classification, regression, clustering, and collaborative filtering
+- Featurization: feature extraction, transformation, dimensionality reduction, and selection
+- Pipelines: tools for constructing, evaluating, and tuning ML Pipelines
+- Persistence: saving and load algorithms, models, and Pipelines
+- Utilities: linear algebra, statistics, data handling, etc.
+
+There are multiple choices that could do the regression job in MlLib. The most simple and fast model is Linear Regression, so we will test it first. And the most efficient and precise model is Random Forest Regression. Thus we would like to test random forest regression algorithms too. If there is more time left for us, we could explore more related algorithms.
+
+Here are links of documents of these algorithms with examples.
+
+1. Linear regression
+http://spark.apache.org/docs/latest/ml-classification-regression.html#linear-regression
+
+2. Random forest regression
+http://spark.apache.org/docs/latest/ml-classification-regression.html#random-forests
+http://spark.apache.org/docs/latest/ml-classification-regression.html#random-forest-regression
+http://spark.apache.org/docs/latest/mllib-ensembles.html#random-forests
+
+
