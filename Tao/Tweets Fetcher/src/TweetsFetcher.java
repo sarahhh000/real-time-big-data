@@ -1,12 +1,11 @@
 /*
  * Author: Yicong Tao
- * Reference: David Crowley: Simple Tweets collection using Twitter¡¯s Stream API and Java using Twitter4j
+ * Reference: David Crowley: Simple Tweets collection using Twitter Stream API and Java using Twitter4j
  * http://davidcrowley.me/?p=435
  */
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.PrintWriter;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
