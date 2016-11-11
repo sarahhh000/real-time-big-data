@@ -23,7 +23,6 @@ import twitter4j.conf.ConfigurationBuilder;
 public class TweetsFetcher {
 
     private ConfigurationBuilder cb;
-    private String outputFileName = "tweets.txt";
     
     public void setOAuthConfig(String OAuthConfigFile) {
         
@@ -64,89 +63,72 @@ public class TweetsFetcher {
         
     }
     
-    public void setOutputFile(String outputFileName) {
-        this.outputFileName = outputFileName;
-    }
-    
-    public void getLatestTweet(int timeout) {
-        try {
-            TwitterStream twitterStream = new TwitterStreamFactory(cb.build()).getInstance();
-            PrintWriter writer = new PrintWriter(outputFileName, "UTF-8");
-
-            StatusListener listener = new StatusListener() {
-
-                @Override
-                public void onException(Exception arg0) {
-                    // TODO Auto-generated method stub
-                }
-
-                @Override
-                public void onDeletionNotice(StatusDeletionNotice arg0) {
-                    // TODO Auto-generated method stub
-                }
-
-                @Override
-                public void onScrubGeo(long arg0, long arg1) {
-                    // TODO Auto-generated method stub
-                }
-
-                @Override
-                public void onStatus(Status status) {
-                    User user = status.getUser();
-                    
-                    String username = status.getUser().getScreenName();
-                    writer.println(username);
-                    
-                    String profileLocation = user.getLocation();
-                    writer.println(profileLocation);
-                    
-                    long tweetId = status.getId(); 
-                    writer.println(tweetId);
-                    
-                    String content = status.getText();
-                    writer.println(content);
-                    
-                    writer.println();
-                }
-
-                @Override
-                public void onTrackLimitationNotice(int arg0) {
-                    // TODO Auto-generated method stub
-                }
-
-                @Override
-                public void onStallWarning(StallWarning arg0) {
-                    // TODO Auto-generated method stub
-                }
-
-            };
-//            FilterQuery fq = new FilterQuery();
+    public void getLatestTweet(String[] keywords) {
         
-//            String keywords[] = {"Donald Trump", "Hillary Clinton"};
+        TwitterStream twitterStream = new TwitterStreamFactory(cb.build()).getInstance();
 
-//            fq.track(keywords);
+        StatusListener listener = new StatusListener() {
 
-//            twitterStream.filter(fq);  
-            
-            twitterStream.addListener(listener);
-            twitterStream.sample();
-            
-            TimeUnit.SECONDS.sleep(timeout);
-            
-            twitterStream.shutdown();
-            writer.close();
+            @Override
+            public void onException(Exception arg0) {
+                // TODO Auto-generated method stub
+            }
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+            @Override
+            public void onDeletionNotice(StatusDeletionNotice arg0) {
+                // TODO Auto-generated method stub
+            }
+
+            @Override
+            public void onScrubGeo(long arg0, long arg1) {
+                // TODO Auto-generated method stub
+            }
+
+            @Override
+            public void onStatus(Status status) {
+                User user = status.getUser();
+
+                String username = status.getUser().getScreenName();
+                System.out.println(username);
+
+                String profileLocation = user.getLocation();
+                System.out.println(profileLocation);
+
+                long tweetId = status.getId();
+                System.out.println(tweetId);
+
+                String content = status.getText();
+                System.out.println(content);
+
+                System.out.println();
+            }
+
+            @Override
+            public void onTrackLimitationNotice(int arg0) {
+                // TODO Auto-generated method stub
+            }
+
+            @Override
+            public void onStallWarning(StallWarning arg0) {
+                // TODO Auto-generated method stub
+            }
+
+        };
+
+        FilterQuery fq = new FilterQuery();
+
+        fq.track(keywords);
+
+        twitterStream.addListener(listener);
+        twitterStream.filter(fq);
 
     }
     
     public static void main(String[] args) {
         TweetsFetcher test = new TweetsFetcher();
-        test.setOAuthConfig("OAuthConfig.txt");
-        test.setOutputFile("tweets.txt");
-        test.getLatestTweet(10);    // Get latest 10 seconds tweets
+        String[] keywords = {"restaurant"};
+        test.setOAuthConfig("OAuthConfig");
+        test.getLatestTweet(keywords);    // Get latest 10 seconds tweets
     }
 
 }
