@@ -28,6 +28,9 @@ public class TweetsFetcher {
         cb = new ConfigurationBuilder();
         cb.setDebugEnabled(true);
         try {
+            
+            System.out.println("Working Directory = " +
+                System.getProperty("user.dir"));
             Scanner sc = new Scanner(new File(OAuthConfigFile));
             while (sc.hasNextLine()) {
                 switch (sc.next()) {
