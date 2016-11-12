@@ -3,6 +3,7 @@
  * Reference: David Crowley: Simple Tweets collection using Twitter Stream API and Java using Twitter4j
  * http://davidcrowley.me/?p=435
  */
+package twitter;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -22,13 +23,13 @@ import twitter4j.conf.ConfigurationBuilder;
 public class TweetsFetcher {
 
     private ConfigurationBuilder cb;
-    
+
     public void setOAuthConfig(String OAuthConfigFile) {
-        
+
         cb = new ConfigurationBuilder();
         cb.setDebugEnabled(true);
         try {
-            
+
             System.out.println("Working Directory = " +
                 System.getProperty("user.dir"));
             Scanner sc = new Scanner(new File(OAuthConfigFile));
@@ -37,19 +38,19 @@ public class TweetsFetcher {
                 case "OAuthConsumerKey":
                     cb.setOAuthConsumerKey(sc.next());
                     break;
-                
+
                 case "OAuthConsumerSecret":
                     cb.setOAuthConsumerSecret(sc.next());
                     break;
-                    
+
                 case "OAuthAccessToken":
                     cb.setOAuthAccessToken(sc.next());
                     break;
-                    
+
                 case "OAuthAccessTokenSecret":
                     cb.setOAuthAccessTokenSecret(sc.next());
                     break;
-                    
+
                 default:
                     System.err.println("The configuration file is not correct!");
                     System.exit(1);
@@ -57,16 +58,16 @@ public class TweetsFetcher {
                 }
             }
             sc.close();
-            
+
         } catch (FileNotFoundException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        
+
     }
-    
+
     public void getLatestTweet(String[] keywords) {
-        
+
         TwitterStream twitterStream = new TwitterStreamFactory(cb.build()).getInstance();
 
         StatusListener listener = new StatusListener() {
@@ -90,17 +91,19 @@ public class TweetsFetcher {
             public void onStatus(Status status) {
                 User user = status.getUser();
 
-                String username = status.getUser().getScreenName();
-                System.out.println(username);
+                String username = user.getScreenName();
+                System.out.print(username);
 
                 String profileLocation = user.getLocation();
-                System.out.println(profileLocation);
+                System.out.print("\t" + profileLocation);
 
                 long tweetId = status.getId();
-                System.out.println(tweetId);
+                System.out.print("\t" + tweetId);
 
                 String content = status.getText();
-                System.out.println(content);
+                content.replace("\n", " ");
+                content.replace("\r", "");
+                System.out.print("\t" + content);
 
                 System.out.println();
             }
@@ -125,7 +128,7 @@ public class TweetsFetcher {
         twitterStream.filter(fq);
 
     }
-    
+
     public static void main(String[] args) {
         TweetsFetcher test = new TweetsFetcher();
         String[] keywords = {"restaurant"};
