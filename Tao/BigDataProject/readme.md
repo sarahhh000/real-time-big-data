@@ -32,7 +32,12 @@ To call the program, use the following command:
 hadoop jar target/BigDataProject-XXX.jar profiling.Profiling [path to the input file] [path to the output directory]
 ```
 
-**Fetching Tweets**
+**Fetching Tweets (only lang=en)**
 ```
-nohup java -jar target/BigDataProject-XXX.jar [keywords] >>[output file] 2>[log file] &
+nohup java -cp target/classes:target/lib/* twitter.TweetsFetcher [keywords] >>[output file] 2>[log file] &
+```
+
+**Clean Fetched Tweets (only keep whitespace and Latin-Basic characters)**
+```
+cat [tweets file] | java -cp target/classes/:target/lib/* cleaning.Cleaning > [output file]
 ```

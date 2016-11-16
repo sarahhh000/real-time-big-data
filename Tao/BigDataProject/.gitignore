@@ -1,6 +1,4 @@
-twitter4j.properties
-tweets.txt
-log.txt
-command.txt
-/target
-
+/*
+!/src
+!pom.xml
+!readme.md

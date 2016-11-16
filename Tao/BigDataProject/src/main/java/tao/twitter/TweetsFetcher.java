@@ -31,8 +31,7 @@ import twitter4j.Place;
 public class TweetsFetcher {
 
     public void getLatestTweet(String[] keywords) {
-        // try (PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter("tweets.txt", true)), true))
-        // {
+
             TwitterStream twitterStream = new TwitterStreamFactory().getInstance();
             StatusListener listener = new StatusListener() {
 
@@ -71,8 +70,7 @@ public class TweetsFetcher {
                     System.out.print("\t" + Boolean.toString(status.isRetweeted()));
 
                     String content = status.getText();
-                    content.replace("\n", " ");
-                    content.replace("\r", "");
+                    content = content.replaceAll("\\s+", " ");
                     System.out.print("\t" + content);
 
                     System.out.println();
@@ -98,13 +96,10 @@ public class TweetsFetcher {
             FilterQuery fq = new FilterQuery();
 
             fq.track(keywords);
+            fq.language("en");
 
             twitterStream.addListener(listener);
             twitterStream.filter(fq);
-
-        // } catch (IOException e) {
-        //     e.printStackTrace();
-        // }
 
     }
 
