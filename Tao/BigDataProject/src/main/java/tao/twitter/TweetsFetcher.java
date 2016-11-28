@@ -27,10 +27,20 @@ import twitter4j.TwitterStream;
 import twitter4j.TwitterStreamFactory;
 import twitter4j.User;
 import twitter4j.Place;
+import twitter4j.GeoLocation;
 
 public class TweetsFetcher {
 
-    public void getLatestTweet(String[] keywords) {
+    public String[] language;
+    public double[][] locations;
+    public String[] keywords;
+
+    public TweetsFetcher() {
+        language = new String[1];
+        language[0] = "en";
+    }
+
+    public void getLatestTweet() {
 
             TwitterStream twitterStream = new TwitterStreamFactory().getInstance();
             StatusListener listener = new StatusListener() {
@@ -58,11 +68,17 @@ public class TweetsFetcher {
                     User user = status.getUser();
 
                     System.out.print(user.getScreenName());
-                    System.out.print("\t" + user.getLocation());
 
                     Place place = status.getPlace();
                     if (place != null) {
                         System.out.print("\t" + place.getFullName());
+                    } else {
+                        System.out.print("\t" + "null");
+                    }
+
+                    GeoLocation geoloc = status.getGeoLocation();
+                    if (geoloc != null) {
+                        System.out.print("\t" + geoloc.getLongitude() + "," + geoloc.getLatitude());
                     } else {
                         System.out.print("\t" + "null");
                     }
@@ -95,20 +111,13 @@ public class TweetsFetcher {
 
             FilterQuery fq = new FilterQuery();
 
-            fq.track(keywords);
-            fq.language("en");
+            fq.language(language);
+            if (locations != null) fq.locations(locations);
+            if (keywords != null) fq.track(keywords);
 
             twitterStream.addListener(listener);
             twitterStream.filter(fq);
 
-    }
-
-    public static void main(String[] args) {
-        System.err.println("Working Directory = " + System.getProperty("user.dir"));
-        System.err.println("Keywords = " + Arrays.toString(args));
-        TweetsFetcher test = new TweetsFetcher();
-        String[] keywords = args;
-        test.getLatestTweet(keywords);
     }
 
 }
