@@ -86,6 +86,7 @@ public class TweetsFetcher {
                     System.out.print("\t" + Boolean.toString(status.isRetweeted()));
 
                     String content = status.getText();
+                    // remove whitespace characters (etc. \n, \r, \t) inside the tweets
                     content = content.replaceAll("\\s+", " ");
                     System.out.print("\t" + content);
 
