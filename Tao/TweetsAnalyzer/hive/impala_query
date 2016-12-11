@@ -1,0 +1,53 @@
+invalidate metadata;
+
+DROP TABLE phoenix_block_feature_senti;
+
+ALTER TABLE phoenix_block_feature_senti RENAME TO phoenix_tweets_senti;
+
+CREATE TABLE senti_common AS
+SELECT block_nums, COUNT(*) AS tweet_count, AVG(senti_negative) AS senti_negative_avg, AVG(senti_neutral) AS senti_neutral_avg, AVG(senti_positive) AS senti_positive_avg, AVG(senti_compound) AS senti_compound_avg
+FROM tweets_phoenix
+GROUP BY block_nums
+ORDER BY block_nums ASC;
+
+CREATE TABLE senti_positive AS
+SELECT block_nums, COUNT(*) AS senti_compound_positive_count FROM tweets_phoenix WHERE senti_compound > 0 GROUP BY block_nums ORDER BY block_nums ASC;
+
+CREATE TABLE senti_negative AS
+SELECT block_nums, COUNT(*) AS senti_compound_negative_count FROM tweets_phoenix WHERE senti_compound < 0 GROUP BY block_nums ORDER BY block_nums ASC;
+
+CREATE TABLE senti_neutral AS
+SELECT block_nums, COUNT(*) AS senti_compound_neutral_count FROM tweets_phoenix WHERE senti_compound = 0 GROUP BY block_nums ORDER BY block_nums ASC;
+
+CREATE TABLE phoenix_tweets_senti AS
+SELECT com.*, COALESCE(pos.senti_compound_positive_count, 0L) AS senti_compound_positive_count, COALESCE(neg.senti_compound_negative_count, 0L) AS senti_compound_negative_count, COALESCE(neu.senti_compound_neutral_count, 0L) AS senti_compound_neutral_count
+FROM senti_common com
+LEFT JOIN senti_positive pos ON pos.block_nums = com.block_nums
+LEFT JOIN senti_negative neg ON neg.block_nums = com.block_nums
+LEFT JOIN senti_neutral neu ON neu.block_nums = com.block_nums
+ORDER BY com.block_nums ASC;
+
+CREATE TABLE phoenix_tweets_feature AS
+SELECT senti.*, ngram.ngram
+FROM phoenix_tweets_senti senti
+JOIN phoenix_tweets_ngram ngram ON senti.block_nums = ngram.block_nums
+ORDER BY senti.block_nums ASC;
+
+
+SELECT t1.block_nums, t1.tweet_count, t2.ngram
+FROM phoenix_tweets_senti t1, phoenix_tweets_ngram t2
+WHERE t1.block_nums = t2.block_nums AND t1.tweet_count > 500;
+
+// join three table together
+CREATE TABLE phoenix_complete_feature AS
+SELECT gtfs.*, yelp.*, tweet.*
+FROM gtfs
+FULL OUTER JOIN phoenix_tweets_senti tweet ON tweet.block_nums = gtfs.gtfs0
+FULL OUTER JOIN yelp_feature yelp ON gtfs.gtfs0 = yelp.location
+ORDER BY gtfs.gtfs0 ASC;
+
+// select feature that all three table has
+CREATE TABLE phoenix_full_feature AS
+SELECT avgstar, business_count, reviewcount, five_star_count, four_star_count, three_star_count, two_star_count, one_star_count, senti_neg_avg, senti_pos_avg, senti_neu_avg, senti_comp_avg, senti_compound_pos_count, senti_compound_neg_count, senti_compound_neu_count, tweet_count, senti_negative_avg, senti_neutral_avg, senti_positive_avg, senti_compound_avg, senti_compound_positive_count, senti_compound_negative_count, senti_compound_neutral_count, gtfs1, gtfs2, gtfs3, gtfs4, gtfs5, gtfs6, gtfs7, gtfs8, gtfs9
+FROM phoenix_complete_feature
+WHERE gtfs1 > 0 AND avgstar > 0 AND tweet_count > 0;

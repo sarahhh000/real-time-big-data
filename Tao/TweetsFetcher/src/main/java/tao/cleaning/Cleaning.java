@@ -8,7 +8,7 @@ public class Cleaning {
         while (sc.hasNextLine()) {
             String line = sc.nextLine();
             // remove non latin-basic characters
-            String clean = line.replaceAll("[^\\x00-\\x7F]", "").trim();
+            String clean = line.replaceAll("[^\\x20-\\x7E\t]", "").trim();
             System.out.println(clean);
         }
     }
