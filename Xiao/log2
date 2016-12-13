@@ -1,0 +1,72 @@
+[xx565@login-1-1 bigdata_final]$ hadoop jar DataFormat.jar out1 output2
+16/12/12 23:27:17 INFO client.RMProxy: Connecting to ResourceManager at babar.es.its.nyu.edu/128.122.215.50:8032
+16/12/12 23:27:17 WARN mapreduce.JobResourceUploader: Hadoop command-line option parsing not performed. Implement the Tool interface and execute your application with ToolRunner to remedy this.
+16/12/12 23:27:18 INFO input.FileInputFormat: Total input paths to process : 1
+16/12/12 23:27:18 INFO mapreduce.JobSubmitter: number of splits:1
+16/12/12 23:27:19 INFO mapreduce.JobSubmitter: Submitting tokens for job: job_1480358343656_21726
+16/12/12 23:27:19 INFO impl.YarnClientImpl: Submitted application application_1480358343656_21726
+16/12/12 23:27:19 INFO mapreduce.Job: The url to track the job: http://babar.es.its.nyu.edu:8088/proxy/application_1480358343656_21726/
+16/12/12 23:27:19 INFO mapreduce.Job: Running job: job_1480358343656_21726
+16/12/12 23:27:23 INFO mapreduce.Job: Job job_1480358343656_21726 running in uber mode : false
+16/12/12 23:27:23 INFO mapreduce.Job:  map 0% reduce 0%
+16/12/12 23:27:28 INFO mapreduce.Job:  map 100% reduce 0%
+16/12/12 23:27:33 INFO mapreduce.Job:  map 100% reduce 84%
+16/12/12 23:27:34 INFO mapreduce.Job:  map 100% reduce 100%
+16/12/12 23:27:38 INFO mapreduce.Job: Job job_1480358343656_21726 completed successfully
+16/12/12 23:27:38 INFO mapreduce.Job: Counters: 49
+	File System Counters
+		FILE: Number of bytes read=137549
+		FILE: Number of bytes written=4235626
+		FILE: Number of read operations=0
+		FILE: Number of large read operations=0
+		FILE: Number of write operations=0
+		HDFS: Number of bytes read=165788
+		HDFS: Number of bytes written=131684
+		HDFS: Number of read operations=99
+		HDFS: Number of large read operations=0
+		HDFS: Number of write operations=64
+	Job Counters 
+		Launched map tasks=1
+		Launched reduce tasks=32
+		Data-local map tasks=1
+		Total time spent by all maps in occupied slots (ms)=9340
+		Total time spent by all reduces in occupied slots (ms)=499110
+		Total time spent by all map tasks (ms)=2335
+		Total time spent by all reduce tasks (ms)=83185
+		Total vcore-seconds taken by all map tasks=2335
+		Total vcore-seconds taken by all reduce tasks=83185
+		Total megabyte-seconds taken by all map tasks=9564160
+		Total megabyte-seconds taken by all reduce tasks=511088640
+	Map-Reduce Framework
+		Map input records=6238
+		Map output records=6238
+		Map output bytes=165675
+		Map output materialized bytes=137421
+		Input split bytes=113
+		Combine input records=0
+		Combine output records=0
+		Reduce input groups=330
+		Reduce shuffle bytes=137421
+		Reduce input records=6238
+		Reduce output records=330
+		Spilled Records=12476
+		Shuffled Maps =32
+		Failed Shuffles=0
+		Merged Map outputs=32
+		GC time elapsed (ms)=725
+		CPU time spent (ms)=35820
+		Physical memory (bytes) snapshot=13756837888
+		Virtual memory (bytes) snapshot=83019067392
+		Total committed heap usage (bytes)=53063712768
+	Shuffle Errors
+		BAD_ID=0
+		CONNECTION=0
+		IO_ERROR=0
+		WRONG_LENGTH=0
+		WRONG_MAP=0
+		WRONG_REDUCE=0
+	File Input Format Counters 
+		Bytes Read=165675
+	File Output Format Counters 
+		Bytes Written=131684
+[xx565@login-1-1 bigdata_final]$ 

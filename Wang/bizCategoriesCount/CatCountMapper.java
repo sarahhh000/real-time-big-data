@@ -19,9 +19,13 @@ public class CatCountMapper
             JsonArray arr;
             String str;
             arr = (JsonArray) bizmap.get("categories");
-            for(int i = 0; i < arr.size(); i++) {
-                str = arr.get(i).getAsString();
-                context.write(new Text("\"" + str + "\""), new IntWritable(1));
-            }
+            String city = (String)bizmap.get("city");
+            if(city.equals("Phoenix")){
+                for(int i = 0; i < arr.size(); i++) {
+                    str = arr.get(i).getAsString();
+                    context.write(new Text("\"" + str + "\""), new IntWritable(1));
+
+                }
+        }
     }
 }

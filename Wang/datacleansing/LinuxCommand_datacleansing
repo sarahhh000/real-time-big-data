@@ -1,0 +1,14 @@
+—-(1) Convert business file from json to csv fomat
+python json_to_csv_converter.py yelp_academic_dataset_business.json
+
+
+—-(2)Convert review file from json to csv format
+python json_to_csv_converter.py yelp_academic_dataset_review.json
+
+
+—-(3) replace newline in the "full address" field with white space so that i can create talbe in Hive
+tr '\r' ' ' <yelp_academic_dataset_business.csv > yelp_business_clean.csv
+
+—-(4) replace all newline in review text with white space
+tr '\n' ' ' < yelp_academic_dataset_review.csv > yelp_academic_dataset_review2.csv
+tr '\r' '\n' < yelp_academic_dataset_review2.csv > yelp_review_clean.csv

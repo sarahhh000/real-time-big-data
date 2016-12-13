@@ -1,0 +1,119 @@
+--Line 2 to line 5 create a table in hive based on yelp_business dataset with all its features
+create external table yelp_business (attributesAmbiencedivey string,attributesDietaryRestrictionsvegan string,attributesHappyHour string,hoursThursdayopen string,attributesOrderatCounter string,attributesHairTypesSpecializedInafricanamerican string,attributesHairTypesSpecializedInkids string,attributesBYOB string,hoursFridayopen string,attributesGoodForlatenight string,attributesOutdoorSeating string,attributesAlcohol string,attributesAmbienceclassy string,attributesByAppointmentOnly string,attributesParkinglot string,business_id string,attributesAmbiencetouristy string,attributesCorkage string,hoursTuesdayopen string,attributesGoodForbrunch string,categories string,attributesWaiterService string,hoursMondayopen string,name string,attributesParkingstreet string,attributesAmbiencehipster string,attributesBYOBCorkage string,attributesHairTypesSpecializedInstraightperms string,attributesMusiclive string,attributesDietaryRestrictionsdairyfree string,attributesMusicbackgroundmusic string,attributesPriceRange string,attributesGoodForbreakfast string,attributesParkinggarage string,attributesMusickaraoke string,attributesGoodForDancing string,review_count smallint,attributesHairTypesSpecializedInasian string,state string,attributesAcceptsCreditCards string,hoursFridayclose string,attributesGoodForlunch string,attributesParkingvalet string,attributesTakeout string,full_address string,hoursThursdayclose string,attributesHairTypesSpecializedIncoloring string,attributesGoodFordessert string,attributesMusicvideo string,attributesDietaryRestrictionshalal string,attributesTakesReservations string,hoursSaturdayopen string,attributesAgesAllowed string,attributesAmbiencetrendy string,attributesDelivery string,hoursWednesdayclose string,attributesWiFi string,open boolean,city string,attributesWheelchairAccessible string,attributesDietaryRestrictionsglutenfree string,stars float,attributesDietaryRestrictionskosher string,type string,attributesCaters string,attributesAmbienceintimate string,latitude float,attributesGoodFordinner string,attributesCoatCheck string,longitude float,hoursMondayclose string,attributesHairTypesSpecializedInextensions string,hoursTuesdayclose string,hoursSaturdayclose string,attributesGoodforKids string,attributesParkingvalidated string,hoursSundayopen string,attributesAcceptsInsurance string,attributesMusicdj string,attributesDietaryRestrictionssoyfree string,attributesHasTV string,hoursSundayclose string,attributesAmbiencecasual string,attributesHairTypesSpecializedInperms string,attributesDogsAllowed string,attributesDriveThru string,attributesDietaryRestrictionsvegetarian string,hoursWednesdayopen string,attributesNoiseLevel string,attributesSmoking string,attributesAttire string,attributesHairTypesSpecializedIncurly string,attributesGoodForGroups string,neighborhoods string,attributesOpen24Hours string,attributesAmbienceromantic string,attributesMusicjukebox string,attributesAmbienceupscale string,location smallint)
+row format delimited fields terminated by '\t'
+location '/user/jw4716/teamproj/input/bizinput'
+tblproperties ("skip.header.line.count"="1");
+
+
+--Line 8 to line 11 creates a table in hive using yelp_review data
+create external table yelp_review (user_id string, review_id string, text string, votes_cool int, business_id string, votes_funny int, stars float, date date, type string, votes_useful int)
+row format delimited fields terminated by '\t'
+location '/user/jw4716/teamproj/input/reviewinput'
+tblproperties ("skip.header.line.count"="1");
+
+
+--Create an external empty table with the schema of the table resulted from
+--join opration of table yelp_business and talbe yelp_review on business_id
+create external table yelp_businessReview(business_id string, user_id string, location smallint, business_stars float, review_count int, categories string, review_stars float, review_text string, date date, vote_cool int, vote_funny int, vote_useful int)
+row format delimited fields terminated by '\t';
+
+
+--Join yelp_business and yelp_review on business_id
+INSERT OVERWRITE TABLE yelp_businessReview
+SELECT t1.business_id, t2.user_id, t1.location, t1.stars, t1.review_count, t1.categories, t2.stars, t2.text, t2.date, t2.votes_cool, t2.votes_funny, t2.votes_useful
+FROM yelp_business t1
+join yelp_review t2
+ON (t1.business_id = t2.business_id);
+
+
+--470 out of 700 locations have businesses in them. Result of the following command: 470
+select distinct location from yelp_business;
+
+
+--354 out of 470 locations have businesses and reviews in them. Result of the following command: 354
+select distinct location from yelp_businessReview;
+
+
+--Write table yelp_businessReview into local filesystem as the input of ngram analysis
+beeline --outputformat=tsv2 -n <netID> -p <Password> -u jdbc:hive2://babar.es.its.nyu.edu:10000 -e "use <netID>; select * from yelp_businessReview;" > ngraminput.tsv
+
+--The following code gives the count of different stars in a particular location
+CREATE TABLE five_star AS
+SELECT location, COUNT(*) AS five_star_count FROM yelp_businessReview where review_stars = 5 GROUP BY location ORDER BY location ASC;
+
+CREATE TABLE four_star AS
+SELECT location, COUNT(*) AS four_star_count FROM yelp_businessReview where review_stars >= 4 and review_stars < 5 GROUP BY location ORDER BY location ASC;
+
+CREATE TABLE three_star AS
+SELECT location, COUNT(*) AS three_star_count FROM yelp_businessReview where review_stars >= 3 and review_stars < 4 GROUP BY location ORDER BY location ASC;
+
+CREATE TABLE two_star AS
+SELECT location, COUNT(*) AS two_star_count FROM yelp_businessReview where review_stars >= 2 and review_stars < 3 GROUP BY location ORDER BY location ASC;
+
+CREATE TABLE one_star AS
+SELECT location, COUNT(*) AS one_star_count FROM yelp_businessReview where review_stars < 2 GROUP BY location ORDER BY location ASC;
+
+--The following code counts the number of businesses in different locations
+CREATE TABLE business_num AS
+SELECT location, COUNT(DISTINCT business_id) AS business_count FROM yelp_businessReview GROUP BY location ORDER BY location ASC;
+
+--The following code returns the sum of reviews in different locations
+CREATE TABLE review_num AS
+SELECT location, SUM(review_count) AS reviewcount FROM yelp_businessReview GROUP BY location ORDER BY location ASC;
+
+
+create external table ngram (location smallint, phrase String)
+row format delimited fields terminated by '\t'
+location '/user/jw4716/teamproj/featurengram';
+
+
+create external table bizstar (location smallint, avgstar double)
+row format delimited fields terminated by '\t'
+location '/user/jw4716/teamproj/featurebizstar';
+
+
+--The following code adds results of sentiment analysis to Hive
+CREATE EXTERNAL TABLE bizreview_sentiment (business_id string, user_id string, location smallint, business_stars float, review_count int, categories string, review_stars float, review_text string, date date, vote_cool int, vote_funny int, vote_useful int, senti_neg double, senti_neu double, senti_pos double, senti_comp double)
+row format delimited fields terminated by '\t'
+location '/user/jw4716/teamproj/sentiment';
+
+CREATE TABLE senti_common AS
+SELECT location, AVG(senti_neg) AS senti_neg_avg, AVG(senti_neu) AS senti_neu_avg, AVG(senti_pos) AS senti_pos_avg, AVG(senti_comp) AS senti_comp_avg FROM bizreview_sentiment
+GROUP BY location
+ORDER BY location ASC;
+
+CREATE TABLE senti_positive AS
+SELECT location, COUNT(*) AS senti_compound_positive_count FROM bizreview_sentiment WHERE senti_comp > 0 GROUP BY location ORDER BY location ASC;
+
+CREATE TABLE senti_negative AS
+SELECT location, COUNT(*) AS senti_compound_negative_count FROM bizreview_sentiment WHERE senti_comp < 0 GROUP BY location ORDER BY location ASC;
+
+CREATE TABLE senti_neutral AS
+SELECT location, COUNT(*) AS senti_compound_neutral_count FROM bizreview_sentiment WHERE senti_comp = 0 GROUP BY location ORDER BY location ASC;
+
+
+CREATE TABLE yelp_feature AS
+SELECT br.avgstar, br.location, biznum.business_count, reviewnum.reviewcount, five.five_star_count, four.four_star_count, three.three_star_count, two.two_star_count, one.one_star_count, common.senti_neg_avg, common.senti_pos_avg, common.senti_neu_avg, common.senti_comp_avg, pos.senti_compound_positive_count AS senti_compound_pos_count, neg.senti_compound_negative_count AS senti_compound_neg_count, neu.senti_compound_neutral_count AS senti_compound_neu_count
+FROM bizstar br
+LEFT JOIN business_num biznum ON biznum.location = br.location
+LEFT JOIN review_num reviewnum ON reviewnum.location = br.location
+LEFT JOIN five_star five ON five.location = br.location
+LEFT JOIN four_star four ON four.location = br.location
+LEFT JOIN three_star three ON three.location = br.location
+LEFT JOIN two_star two ON two.location = br.location
+LEFT JOIN one_star one ON one.location = br.location
+LEFT JOIN senti_common common ON common.location = br.location
+LEFT JOIN senti_positive pos ON pos.location = br.location
+LEFT JOIN senti_negative neg ON neg.location = br.location
+LEFT JOIN senti_neutral neu ON neu.location = br.location
+ORDER BY br.location ASC;
+
+
+
+
+
+
+
+
+
+

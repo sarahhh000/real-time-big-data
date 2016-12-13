@@ -1,3 +1,0 @@
-yelp_academic_dataset.json files are transfered to yelp_academic_dataset.csv files using example code json_to_csv_converter.py downloaded from http://www.yelp.com/academic_dataset. And 59233 unique names of businesses are extracted from 85901 businesses.
-
-Becuse there are arrays(also divided by comma) with diffrent sizes in some columns in the yelp_academic_dataset_business.csv file, direct shell command for getting column is not applicable. Thus I opened the cvs file with excel and copy the column "name" out to another file. Then command "cat bizname_original.txt | cut -d ',' -f1 | sort | uniq -u" is used to get the unique names.
