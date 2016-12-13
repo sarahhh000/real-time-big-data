@@ -1,1 +1,1 @@
-beeline --outputformat=csv2 -n yt1182 -p majia1314527! -u jdbc:hive2://babar.es.its.nyu.edu:10000 -e "use yt1182; select * from phoenix_full_feature;" > phoenix_full_feature.csv
+beeline --outputformat=csv2 -n [netid] -p [passwd] -u jdbc:hive2://babar.es.its.nyu.edu:10000 -e "use [netid]; select * from phoenix_full_feature;" > phoenix_full_feature.csv

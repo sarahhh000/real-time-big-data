@@ -1,7 +1,5 @@
 package profiling;
 
-// cc MaxTemperature Application to find the maximum temperature in the weather dataset
-// vv MaxTemperature
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
@@ -34,4 +32,3 @@ public class Profiling {
         System.exit(job.waitForCompletion(true) ? 0 : 1);
     }
 }
-// ^^ MaxTemperature

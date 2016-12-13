@@ -1,9 +1,4 @@
-invalidate metadata;
-
-DROP TABLE phoenix_block_feature_senti;
-
-ALTER TABLE phoenix_block_feature_senti RENAME TO phoenix_tweets_senti;
-
+// extract feature from sentiment analysis
 CREATE TABLE senti_common AS
 SELECT block_nums, COUNT(*) AS tweet_count, AVG(senti_negative) AS senti_negative_avg, AVG(senti_neutral) AS senti_neutral_avg, AVG(senti_positive) AS senti_positive_avg, AVG(senti_compound) AS senti_compound_avg
 FROM tweets_phoenix
@@ -19,6 +14,7 @@ SELECT block_nums, COUNT(*) AS senti_compound_negative_count FROM tweets_phoenix
 CREATE TABLE senti_neutral AS
 SELECT block_nums, COUNT(*) AS senti_compound_neutral_count FROM tweets_phoenix WHERE senti_compound = 0 GROUP BY block_nums ORDER BY block_nums ASC;
 
+// create feature table with sentiment analysis statistics
 CREATE TABLE phoenix_tweets_senti AS
 SELECT com.*, COALESCE(pos.senti_compound_positive_count, 0L) AS senti_compound_positive_count, COALESCE(neg.senti_compound_negative_count, 0L) AS senti_compound_negative_count, COALESCE(neu.senti_compound_neutral_count, 0L) AS senti_compound_neutral_count
 FROM senti_common com
@@ -27,18 +23,19 @@ LEFT JOIN senti_negative neg ON neg.block_nums = com.block_nums
 LEFT JOIN senti_neutral neu ON neu.block_nums = com.block_nums
 ORDER BY com.block_nums ASC;
 
+// combine ngram result into feature table
 CREATE TABLE phoenix_tweets_feature AS
 SELECT senti.*, ngram.ngram
 FROM phoenix_tweets_senti senti
 JOIN phoenix_tweets_ngram ngram ON senti.block_nums = ngram.block_nums
 ORDER BY senti.block_nums ASC;
 
-
+// check ngram result in the block with tweet count bigger than 500
 SELECT t1.block_nums, t1.tweet_count, t2.ngram
 FROM phoenix_tweets_senti t1, phoenix_tweets_ngram t2
 WHERE t1.block_nums = t2.block_nums AND t1.tweet_count > 500;
 
-// join three table together
+// join three feature table (tweet, yelp, gtfs) together
 CREATE TABLE phoenix_complete_feature AS
 SELECT gtfs.*, yelp.*, tweet.*
 FROM gtfs

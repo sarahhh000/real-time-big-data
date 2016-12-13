@@ -1,7 +1,8 @@
+// connect to the hive server
 beeline
 !connect jdbc:hive2://babar.es.its.nyu.edu:10000
 
-DROP TABLE tweets_phoenix;
+// create main tweet table (after block number label and sentiment analysis)
 CREATE EXTERNAL TABLE tweets_phoenix (
     user_name string,
     tweet_location string,
@@ -19,19 +20,19 @@ FIELDS TERMINATED BY '\t'
 LOCATION '/user/yt1182/project/data/tweets_phoenix/'
 tblproperties('skip.header.line.count'='1');
 
-// gtfs table
+// create gtfs table
 create external table gtfs (gtfs0 int, gtfs1 string, gtfs2 string, gtfs3 string, gtfs4 string, gtfs5 string, gtfs6 string, gtfs7 string, gtfs8 string, gtfs9 string)
 ROW FORMAT DELIMITED
 FIELDS TERMINATED BY ','
 LOCATION '/user/yt1182/project/gtfs/';
 
-// yelp table
+// create yelp table
 CREATE EXTERNAL TABLE yelp_feature (avgstar double, location int,  business_count bigint, reviewcount bigint, five_star_count bigint, four_star_count bigint, three_star_count bigint, two_star_count bigint, one_star_count bigint,  senti_neg_avg double, senti_pos_avg double, senti_neu_avg double, senti_comp_avg double, senti_compound_pos_count bigint, senti_compound_neg_count bigint, senti_compound_neu_count bigint)
 row format delimited fields terminated by ','
 location '/user/yt1182/project/yelp/'
 tblproperties('skip.header.line.count'='1');
 
-
+// create n-gram table
 CREATE EXTERNAL TABLE phoenix_tweets_ngram (
     block_nums int,
     ngram string

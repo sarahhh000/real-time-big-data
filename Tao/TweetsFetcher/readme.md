@@ -28,13 +28,19 @@ Replace the asterisks with your corresponding twitter consumer key and applicati
 To call the program, use the following command:
 
 **Profiling**
+The profiling code tests the field length, providing basic characteristics of the data.
 ```
 hadoop jar target/BigDataProject-XXX.jar profiling.Profiling [path to the input file] [path to the output directory]
 ```
 
-**Fetching Tweets (only lang=en)**
+**Fetching Tweets based on keywords (only lang=en)**
 ```
 nohup java -cp target/classes:target/lib/* twitter.TweetsFetcher [keywords] >>[output file] 2>[log file] &
+```
+
+**Fetching Tweets based on locations (only lang=en)**
+```
+nohup java -cp target/classes:target/lib/* twitter.TweetsFetcher [latitude, longitude] >>[output file] 2>[log file] &
 ```
 
 **Clean Fetched Tweets (only keep whitespace and Latin-Basic characters)**

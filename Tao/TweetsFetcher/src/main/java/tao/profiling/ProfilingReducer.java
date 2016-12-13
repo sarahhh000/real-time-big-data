@@ -1,7 +1,5 @@
 package profiling;
 
-// cc MaxTemperatureReducer Reducer for maximum temperature example
-// vv MaxTemperatureReducer
 import java.io.IOException;
 
 import org.apache.hadoop.io.LongWritable;
@@ -24,4 +22,3 @@ public class ProfilingReducer extends Reducer<Text, LongWritable, Text, Text> {
         context.write(key, new Text("[" + minValue + ", " + maxValue + "]"));
     }
 }
-// ^^ MaxTemperatureReducer
